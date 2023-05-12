@@ -54,8 +54,14 @@ messages.append({"role": "assistant", "content": response})
 # Loop until story ends
 end = False
 while not end:
+  # Reset the first user message which contains instructions
+  # for creating responses, to include a random number for the
+  # instruction about number of choices to include each time. Had
+  # to do this since the llm would not reliaby vary choice count.
+  messages[1]["content"] =  prompt.get_user_continue_story_prompt()
+
   user_input= ""
-  while user_input not in ["1", "2", "3", "4"]:
+  while user_input not in ["1", "2", "3", "4", "5"]:
     user_input = input("\nEnter choice number, or 0 to exit: ")
     if user_input == "0":
       total_cost = utils.get_openai_gpt35_cost(total_tokens_used)

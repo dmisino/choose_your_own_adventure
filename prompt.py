@@ -1,11 +1,80 @@
+import json
+
+def format_response(response):
+  json_response = json.dumps(response)
+  return json_response
+
 def get_system_prompt():
-  return "You are a talented, award-winning book author. You create books that are original, intelligent, high-intensity and adventurous. There can be moments that are very exciting, extremely scary, highly technical or paranormal. You use fantastic and extremely varied locations and plots. You are assisting by writing a new story one page at a time as requested."
+  response = '''
+  You are a talented, award-winning book author. You create books that are original, intelligent, high-intensity and adventurous. There can be moments that are very exciting, extremely scary, highly technical or paranormal. You use fantastic and extremely varied locations and plots. You are assisting by writing a new story one part at a time as requested.
+  '''
+  return format_response(response)
 
 def get_create_story_prompt(seed):
-  create_story_prompt = "Create a wildly original story for kid ages 10 to 14 in the style of a choose-your-own-adventure book. Write one or two paragraphs of text for the first page of the story, and then give a numbered list of 2, 3, or 4 possible options for the reader to choose from. Include nothing other than the story text and choices on the first page of the story. The choices should be numbered with just the number and a period, for example: 1. First choice text"
+  response = '''
+  Create an extremely imaginitive and original story in the style of a choose-your-own-adventure book. Lets think through how to form a response using the following steps:
+  
+  1. Write two or more paragraphs of story text, not less than 80 words total, for the first part of the new story. The story text must be a minimum of two paragraphs long.
+
+  2. Create a list of 3, 4 or 5 actions I can choose from in the story, and then include that list in your response after the story text.
+
+  3. An example of how your response should be formatted:
+  
+  [story text]
+
+  What do you do?
+  1. action choice 1
+  2. action choice 2
+  3. action choice 3
+  [end of example]
+  
+  4. The number of action choices presented should be varied each time you respond, as described above in step 2.
+
+  5. The format of your entire response must be just one single instance of the example shown above. Nothing else besides what is shown in the example can be included in your response.
+
+  6. After a list of choices is added to your response the first time, that is the end of your response. No other text can be added to your response. Do not include any instructions for the user other than what is shown in the example. The response must end immediately after the last choice in the list.
+  '''
   if seed != "":
-    create_story_prompt = create_story_prompt+ " The story should have as a central concept the following thing or idea: " + seed + "."
-  return create_story_prompt
+    response = response+ "\n7. The story must have as a central concept the following idea: " + seed + "."
+  return format_response(response)
 
 def get_user_continue_story_prompt():
-  return "Use the following steps to form a response. STEP 1. Continue the story based on the choice the user made on the last page. Respond with a continuation of the story, in 3 paragraphs or less, and then each time you are creating a response choose a new random number between 2 and 5, and give that many choices to the reader to choose from. STEP 2. If 3, 4 or 5 choices were given on the last page, 1 or 2 of those choices must lead to an ending of the story with a negative outcome where the reader meets an unpleasant end. The negative ending should be disturbing, such as the reader being permanently lost, trapped, dying, imprisoned, eaten, having their mind erased, being infested with alien parasites, or anything else similar. STEP 3. If the last choice a user made is one that leads to a negative ending, respond with 2 or 3 paragraphs describing the bad thing that happened, and then display THE END. STEP 4. The story should have no more than 12 pages. If the user has made it that far without encountering a negative ending, then the story may conclude with a positive ending. Respond with one to three paragraphs describing a happy ending and the end of the story, and then write THE END. STEP 5. Your response must only contain story text, and then either a list of choices, or THE END if appropriate. Nothing else may be included in your response. STEP 6. ONLY write THE END if the story text for the current page descibes an ending, with no choices in the response. STEP 7. DO NOT write THE END if your response includes choices. STEP 8. DO NOT repond with choices if the current page is an ending. STEP 9. If the story reaches an ending sooner than 7 pages into the story, it should ALWAYS be a very negative ending, where the reader meets an unpleasant fate. STEP 10. Very important: DO NOT include 'Page:' at the top of your response. STEP 11. Do not include title, Continuation, User input, or anything else in your response. STEP 12. Your response should ONLY include the paragraphs of story text, and then either a) a numbered list of choices, OR b) the ending of the story with THE END, but never both in the same response. STEP 13. When responding with choices, no words or text can appear after the last choice in the list. The last choice in the list must be the end of your response. STEP 14. When responding with choices, they should always be numbered with just the number and a period, for example: 1. First choice text"
+  response = '''
+  Think through how to should form all of your responses from here on by using the following steps every time you create a new response:
+
+  1. Continue the story based on the choice I made in my last input. Respond with a continuation of the story with text that is at least two paragraphs long.
+
+  2. Each time you continue the story, you will decide based on my last input if the choice made leads to an ending of the story. At least one of the choices you gave in your last response in the chat history, if selected by me, should lead to the story ending.
+
+  3. When the story ends, it can be a NEGATIVE ending or a POSITIVE ending. A NEGATIVE ending will have something very bad happen in the story. A POSITIVE ending will have something very good happen in the story.
+
+  4. Examples of NEGATIVE endings: I am permanently lost, trapped, die, imprisoned, eaten, enslaved, has my mind erased, get infested with alien parasites, or anything else that would be a very unpleasant end for me in the story.
+
+  5. Examples of POSITIVE endings: I save the world, find amazing technology, save lives, get rich, becomes very powerful, learn incredible secrets, gains amazing powers, uncover incredible truths, or anything else that would be a very good type ending for me as a character in the story.
+
+  6. At least one of the last set of choices given to me MUST cause a NEGATIVE ending. If the last input I gave indicates that I selected that choice, your response must be a NEGATIVE story ending. 
+
+  7. If the last input from me IS an action that causes the story to end, then your response should include story text that describes the ending, and then write THE END below that.
+
+  8. If the last input from me IS an action that causes the story to end, AND I have not provided input at least 7 times so far in the story, the ending MUST be a NEGATIVE ending, with the story text describing an ending for me like the ones described above. 
+
+  9. If the last input from me IS NOT an action that causes the story to end, create a numbered list of a 3, 4 or 5 choices for actions I can make in the story, varying the number of choices in the list in every response in our conversation, and add that list to your response after the story text.
+
+  10. The story should continue with no more than 10 user inputs from me and 10 responses from you. If I have selected a choice 10 or more times, the story MUST end in your next response, with a POSITIVE or NEGATIVE ending depending on what action I selected last.
+
+  11. An example of how your entire reponse should be formatted when giving me a new set of choices:
+   
+  [story paragraphs]
+
+  What do you do?
+  1. action choice 1
+  2. action choice 2
+  3. action choice 3
+
+  12. An example of how your entire response should be formatted when giving me an ending:
+
+  [2 or 3 paragraphs describing the end of the story]
+
+  THE END
+  '''
+  return format_response(response)
